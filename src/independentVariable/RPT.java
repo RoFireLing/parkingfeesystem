@@ -33,20 +33,22 @@ public class RPT {
         TestMethods testMethods = new TestMethods();
         List<String> methodsList = testMethods.getMethods();
         int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
+//        int[] partitions = {9};//记录每一个分区之中变异体的数量
         String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
+//        String[] distribution = {"M90-10"};
         RPTLog rptLog = new RPTLog();
         int[] numOfPartitions = {18,3};
+//        int[] numOfPartitions = {3};
+//        int[] numOfPartitions = {18};
         Partition rptPartition = new Partition();
 
         for (int y = 0; y < distribution.length; y++) {//对不同的变异体集进行测试
             for (int i = 0; i < numOfPartitions.length; i++) {//分区方式
                 long totaltime = 0 ;//测试时间的总和
                 RPTMeasure rptMeasure = new RPTMeasure();//记录每一个种子的平均测试结果
+                long start = System.currentTimeMillis();
+
                 for (int j = 0; j < SEEDS; j++) {//对每一个种子进行测试
-                    double fcounter = 0.0 ;//记录30次的fmeasure的总合
-                    double tcounter = 0.0 ;//记录30次的tmeasure的总和
-                    double fmeasure = 0.0 ;
-                    double tmeasure = 0.0 ;
                     for (int k = 0; k < TESTTIMES; k++) {//对每一个随机数种子重复测试30次
                         int counter = 0 ;
                         List<Bean> beans = new ArrayList<Bean>();
@@ -60,7 +62,6 @@ public class RPT {
                             mutants[l] = new BinSet();
                         }
                         mutants = ms.getMutantsList();//获得5中变异体分布的变异体集
-                        long start = System.currentTimeMillis();
 
                         for (int l = 0; l < beans.size();) {//选取测试用例
                             int partition = rptPartition.nextPartition(numOfPartitions[i]);//获取下一个分区的ID
@@ -104,19 +105,18 @@ public class RPT {
                                             killedMutants.add(temp);
                                             templist.add(temp);
                                             if (killedMutants.size() == 1){
-                                                fcounter += counter;
+                                                rptMeasure.addFmeasure(counter);
                                             }else if (killedMutants.size() == partitions[y]){
-                                                long end = System.currentTimeMillis();
-                                                totaltime += (end - start);
-                                                tcounter += counter;
+
+                                                rptMeasure.addTmeasure(counter);
                                             }
                                             break;
                                         }
                                     }
                                 }
                                 //记录1个测试用例在所有得变异体上执行之后的结果
-                                rptLog.recordProcessInfo("rpt_log.txt",distribution[y],String.valueOf(j),
-                                        String.valueOf(i),String.valueOf(bean.getId()),templist,String.valueOf(partitions[y] - killedMutants.size()));
+//                                rptLog.recordProcessInfo("rpt_log.txt",distribution[y],String.valueOf(j),
+//                                        String.valueOf(partition),String.valueOf(bean.getId()),templist,String.valueOf(partitions[y] - killedMutants.size()));
                                 if (killedMutants.size() >= partitions[y]){
                                     break;
                                 }
@@ -133,14 +133,12 @@ public class RPT {
                             }
                         }
                     }
-                    fmeasure = fcounter / TESTTIMES;
-                    tmeasure = tcounter /TESTTIMES;
-                    rptMeasure.addFmeasure(fmeasure);
-                    rptMeasure.addTmeasure(tmeasure);
                 }
+                long end = System.currentTimeMillis();
+                totaltime += (end - start);
                 double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVISOR)) ;
                 rptLog.recordResult("rptResult.txt",distribution[y],rptMeasure.getMeanFmeasure(),rptMeasure.getMeanTmeasure(),
-                        rptMeasure.getstandardDevofFmeasure(),rptMeasure.getstandardDevofTmeasure(),meanTime,String.valueOf(numOfPartitions[i]));
+                        rptMeasure.getStandardDevOfFmeasure(),rptMeasure.getStandardDevOfTmeasure(),meanTime,String.valueOf(numOfPartitions[i]));
             }
         }
     }

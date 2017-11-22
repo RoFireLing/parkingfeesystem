@@ -2,7 +2,6 @@ package independentVariable;
 
 import dependentVariable.DRTMeasure;
 import logrecorder.DRTLog;
-import logrecorder.RPTLog;
 import mutantSet.BinSet;
 import mutantSet.MutantSet;
 import mutantSet.TestMethods;
@@ -91,23 +90,24 @@ public class DRT {
         TestMethods testMethods = new TestMethods();
         List<String> methodsList = testMethods.getMethods();
         int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
+//        int[] partitions = {9};//记录每一个分区之中变异体的数量
         String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
-        DRTLog drtLog = new DRTLog();
+//        String[] distribution = {"1M90-10"};
         int[] numOfPartitions = {18,3};
+//        int[] numOfPartitions = {3};
+//        int[] numOfPartitions = {18};
         Partition rptPartition = new Partition();
         double[] parameters = {0.00001,0.00005,0.0001,0.0005,0.001,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5};
-
+//        double[] parameters = {0.05,0.1,0.2};
+        DRTLog drtLog = new DRTLog();
         for (int y = 0; y < distribution.length; y++) {//对不同的变异体集进行测试
             for (int i = 0; i < numOfPartitions.length; i++) {
                 for (int x = 0; x < parameters.length; x++) {
                     epsilon = parameters[x];
                     DRTMeasure drtMeasure = new DRTMeasure();
                     long totaltime = 0;//记录测试的总时间
+                    long start = System.currentTimeMillis();
                     for (int j = 0; j < SEEDS; j++) {
-                        double fcounter = 0.0 ;//记录30次的fmeasure的总合
-                        double tcounter = 0.0 ;//记录30次的tmeasure的总和
-                        double fmeasure = 0.0 ;
-                        double tmeasure = 0.0 ;
                         for (int k = 0; k < TESTTIMES; k++) {
                             int counter = 0 ;
                             List<Bean> beans = new ArrayList<Bean>();
@@ -126,7 +126,7 @@ public class DRT {
                                 pd[l] = 1.0 / numOfPartitions[i];
                             }
 
-                            long start = System.currentTimeMillis();
+
 
                             for (int l = 0; l < beans.size();) {//选取测试用例
                                 int partition = nextPartition();
@@ -169,19 +169,17 @@ public class DRT {
                                                 killedMutants.add(temp);
                                                 templist.add(temp);
                                                 if (killedMutants.size() == 1){
-                                                    fcounter += counter;
+                                                    drtMeasure.addFmeasure(counter);
                                                 }else if (killedMutants.size() == partitions[y]){
-                                                    long end = System.currentTimeMillis();
-                                                    totaltime += (end - start);
-                                                    tcounter += counter;
+                                                    drtMeasure.addTmeasure(counter);
                                                 }
                                                 break;
                                             }
                                         }
                                     }
                                     //记录1个测试用例在所有得变异体上执行之后的结果
-                                    drtLog.recordProcessInfo("drt_log.txt",distribution[y],String.valueOf(j),
-                                            String.valueOf(partition),String.valueOf(bean.getId()),templist,String.valueOf(partitions[y] - killedMutants.size()),String.valueOf(parameters[x]));
+//                                    drtLog.recordProcessInfo("drt_log.txt",distribution[y],String.valueOf(j),
+//                                            String.valueOf(partition),String.valueOf(bean.getId()),templist,String.valueOf(partitions[y] - killedMutants.size()),String.valueOf(parameters[x]));
                                     if (killedMutants.size() >= partitions[y]){
                                         break;
                                     }
@@ -198,15 +196,12 @@ public class DRT {
                                 }
                             }
                         }
-                        fmeasure = fcounter / TESTTIMES;
-                        tmeasure = tcounter /TESTTIMES;
-
-                        drtMeasure.addFmeasure(fmeasure);
-                        drtMeasure.addTmeasure(tmeasure);
                     }
+                    long end = System.currentTimeMillis();
+                    totaltime += (end - start);
                     double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVISOR)) ;
                     drtLog.recordResult("drtResult.xls",drtMeasure.getMeanFmeasure(),drtMeasure.getMeanTmeasure(),
-                            drtMeasure.getstandardDevofFmeasure(),drtMeasure.getstandardDevofTmeasure(),numOfPartitions[i],
+                            drtMeasure.getStandardDevOfFmeasure(),drtMeasure.getStandardDevOfTmeasure(),numOfPartitions[i],
                             parameters[x],meanTime,distribution[y]);
                 }
             }

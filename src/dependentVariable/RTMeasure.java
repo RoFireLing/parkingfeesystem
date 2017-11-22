@@ -4,97 +4,90 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author phantom
- */
-public class RTMeasure implements Measure {
-    private List<Integer> fmeasure ;
-    private List<Integer> tmeasure ;
-    private static final DecimalFormat decimalFormat = new DecimalFormat("#.00");
-    public RTMeasure() {
-        fmeasure = new ArrayList<Integer>();
-        tmeasure = new ArrayList<Integer>();
+public class RTMeasure {
+    private static final String PATH = "RTResult.txt";
+    private List<Integer> Fmeasure;
+    private List<Integer> Tmeasure;
+    public RTMeasure(){
+        Fmeasure = new ArrayList<Integer>();
+        Tmeasure = new ArrayList<Integer>();
+    }
+    public void addFmeasure(int item){
+        Fmeasure.add(item);
     }
 
-    @Override
-    public void addFmeasure(int item) {
-        fmeasure.add(item);
+    public void addTmeasure(int item){
+        Tmeasure.add(item);
     }
 
-    @Override
-    public void addTmeasure(int item) {
-        tmeasure.add(item);
+    public int sizeFmeasure(){
+        return Fmeasure.size();
     }
 
-    @Override
-    public int sizeFmeasure() {
-        return fmeasure.size();
+    public int sizeTmeasure(){
+        return Tmeasure.size();
     }
 
-    @Override
-    public int sizeTmeasure() {
-        return tmeasure.size();
-    }
-
-    @Override
-    public String getMeanFmeasure() {
-        double sum = 0.0;
-        for (int i = 0; i < fmeasure.size(); i++) {
-            sum += fmeasure.get(i);
+    public String getMeanFmeasure(){
+        double sum = 0.0 ;
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        for (int i = 0; i < this.Fmeasure.size(); i++) {
+            sum = sum + Fmeasure.get(i);
         }
-        return decimalFormat.format(sum / fmeasure.size());
+        return decimalFormat.format(sum / Fmeasure.size());
     }
 
-    @Override
-    public String getMeanTmeasure() {
-        double sum = 0.0;
-        for (int i = 0; i < tmeasure.size(); i++) {
-            sum += tmeasure.get(i);
+    public String getMeanTmeasure(){
+        double sum = 0.0 ;
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        for (int i = 0; i < this.Tmeasure.size(); i++) {
+            sum = sum + Tmeasure.get(i);
         }
-        return decimalFormat.format(sum / tmeasure.size());
+        return decimalFormat.format(sum / Tmeasure.size());
     }
 
-    @Override
-    public String getstandardDevofFmeasure() { return decimalFormat.format(Math.sqrt(varianceofArray(0,this.fmeasure))); }
-
-    @Override
-    public String getstandardDevofTmeasure() { return decimalFormat.format(Math.sqrt(varianceofArray(1,this.tmeasure))); }
-
-    public double varianceofArray(int temp, List<Integer> array) {
+    /**
+     * 返回Fmeasure的标准差
+     * @return 标准差
+     */
+    public String getStandardDevOfFmeasure(){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        return decimalFormat.format(Math.sqrt(varianceOfArray(0,this.Fmeasure)));
+    }
+    /**
+     * 返回Fmeasure的标准差
+     * @return 标准差
+     */
+    public String getStandardDevOfTmeasure(){
+        DecimalFormat decimalFormat = new DecimalFormat("#.00");
+        return decimalFormat.format(Math.sqrt(varianceOfArray(1,this.Tmeasure)));
+    }
+    private double varianceOfArray(int temp,List<Integer> dataArray) {
         double result = 0.0;
         double mean = 0.0;
         if (temp == 0)
             mean = Double.parseDouble(getMeanFmeasure());
         else
             mean = Double.parseDouble(getMeanTmeasure());
-        for (int i = 0; i < array.size(); i++) {
-            result = Math.pow(array.get(i)-mean,2);
+        for (int i = 0; i < dataArray.size(); i++) {
+            result += Math.pow((dataArray.get(i) - mean),2);
         }
-        return result / (array.size() - 1);
+        return result / (dataArray.size() - 1);
     }
 
-    @Override
-    public void toprint() {
-        System.out.println("Fmeasure:");
+    public void toPrint(){
+        System.out.println("F-measure:");
         String f = "";
-        for (int i = 0; i < fmeasure.size(); i++) {
-            f += String.valueOf(fmeasure.get(i)) + ",";
+        for (int i = 0; i < Fmeasure.size(); i++) {
+            f += String.valueOf(Fmeasure.get(i)) + ",";
         }
         System.out.println(f);
-        System.out.println("Tmeasure:");
-        String t = "";
-        for (int i = 0; i < tmeasure.size(); i++) {
-            t += String.valueOf(tmeasure.get(i)) + ",";
+        System.out.println("T-measure");
+        String nf = "";
+        for (int i = 0; i < Tmeasure.size(); i++) {
+            nf += String.valueOf(Tmeasure.get(i))+", ";
         }
-        System.out.println(t);
+        System.out.println(nf);
     }
 
-    public static void main(String[] args) {
-        RTMeasure rtMeasure = new RTMeasure();
-        rtMeasure.addFmeasure(5);
-        rtMeasure.addFmeasure(10);
-        rtMeasure.addTmeasure(5);
-        rtMeasure.addTmeasure(10);
-        System.out.println(rtMeasure.getstandardDevofTmeasure());
-    }
 }

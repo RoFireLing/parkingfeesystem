@@ -14,13 +14,14 @@ public class MutantSet {
             separator+"mutant";
     private static final String CLASS_NAME = "ParkingFeeCalculator";
     private BinSet[] mutantsList;
+    private static final int NUM = 5 ;
+    private String[] txt = {"M50-50.txt","M60-40.txt","M70-30.txt","M80-20.txt","M90-10.txt"};
+//    private String[] txt = {"M90-10.txt"};
     public MutantSet() {
-        mutantsList = new BinSet[5];
+        mutantsList = new BinSet[NUM];
         for (int i = 0; i < mutantsList.length; i++) {
             mutantsList[i] = new BinSet();
         }
-        //向list中加入变异体
-        String[] txt = {"M50-50.txt","M60-40.txt","M70-30.txt","M80-20.txt","M90-10.txt"};
         StringBuffer stringBuffer = new StringBuffer(0);
         for (int i = 0; i < txt.length; i++) {
             String path = System.getProperty("user.dir") + separator + "src" + separator + "mutantSet" + separator + txt[i];
