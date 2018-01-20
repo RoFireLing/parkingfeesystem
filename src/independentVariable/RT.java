@@ -29,10 +29,10 @@ public class RT {
 
         TestMethods testMethods = new TestMethods();
         List<String> methodsList = testMethods.getMethods();
-        int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
-//        int[] partitions = {9};
-        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
-//        String[] distribution = {"M90-10"};
+//        int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
+        int[] partitions = {4};
+//        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
+        String[] distribution = {"LowFailureRate"};
         for (int y = 0; y < distribution.length; y++) {
             //记录每一个测试序列的测试结果
             RTMeasure rtMeasure = new RTMeasure();
@@ -56,6 +56,7 @@ public class RT {
                     List<String> killedMutants = new ArrayList<String>();
                     killedMutants.clear();
                     int counter = 0 ;
+                    int fmeasure = 0 ;
 
                     for (int j = 0; j < beans.size(); j++) {//每一个测试用例要在所有的变异体上执行
                         System.out.println("test begin:");
@@ -93,18 +94,21 @@ public class RT {
                                         killedMutants.add(temp);
                                         templist.add(temp);
                                         if (killedMutants.size() == 1){
+                                            fmeasure = counter;
                                             rtMeasure.addFmeasure(counter);
                                         }else if (killedMutants.size() == partitions[y]){
-
                                             rtMeasure.addTmeasure(counter);
+                                        }else if (killedMutants.size() == 2){
+                                            rtMeasure.addNFmeasure(counter - fmeasure);
                                         }
                                         break;
                                     }
                                 }
                             }
                             //记录1个测试用例在所有得变异体上执行之后的结果
-//                            rtLog.recordProcessInfo("RT_log.txt",distribution[y],String.valueOf(i),String.valueOf(bean.getId()),
-//                                    templist,String.valueOf(partitions[y] - killedMutants.size()));
+                            rtLog.recordProcessInfo("RT_log.txt",distribution[y],String.valueOf(i),
+                                    String.valueOf(bean.getId()),
+                                    templist,String.valueOf(partitions[y] - killedMutants.size()));
                             if (killedMutants.size() >= partitions[y]){
                                 break;
                             }
@@ -126,8 +130,9 @@ public class RT {
             totaltime += (end - start);
             DecimalFormat decimalFormat = new DecimalFormat("#.00");
             double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVID)) ;
-            rtLog.recordResult("RTResult.txt",distribution[y],rtMeasure.getMeanFmeasure(),rtMeasure.getMeanTmeasure(),
-                    rtMeasure.getStandardDevOfFmeasure(),rtMeasure.getStandardDevOfTmeasure(),meanTime);
+            rtLog.recordResult("RTResult.txt",distribution[y],rtMeasure.getMeanFmeasure(),
+                    rtMeasure.getMeanNFmeasure(),rtMeasure.getMeanTmeasure(),rtMeasure.getStandardDevOfFmeasure(),
+                    rtMeasure.getMeanNFmeasure(),rtMeasure.getStandardDevOfTmeasure(),meanTime);
         }
 
     }

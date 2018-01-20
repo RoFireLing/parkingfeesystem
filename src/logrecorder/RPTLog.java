@@ -58,8 +58,8 @@ public class RPTLog {
      * @param sdrtmeasure 方差
      * @param time 花费的时间
      */
-    public void recordResult(String filename, String mutantDistribution,String fmeasure,String tmeasure,
-                             String sdrfmwasure,String sdrtmeasure,double time,String partition){
+    public void recordResult(String filename, String mutantDistribution,String fmeasure,String nfmeasure,String tmeasure,
+                             String sdrfmwasure,String sdrnfmwasure,String sdrtmeasure,double time,String partition){
         String path = System.getProperty("user.dir") + separator + "result" + separator + filename;
         File file = new File(path);
         try{
@@ -68,9 +68,14 @@ public class RPTLog {
             }
             //向文件中记录结果
             FileWriter fileWriter = new FileWriter(file,true);
-            String content = "\n" + "变异体分布：" + mutantDistribution + "\n" +"分区数目为："+partition+"\n"+ "Fmeasure =" + fmeasure + "\n" + "Tmeasure =" +
-                    tmeasure + "\n" + "sdr_Fmeasure =" + sdrfmwasure + "\n" + "sdr_Tmeasure =" + sdrtmeasure + "\n" + "平均时间为："
-                    + String.valueOf(time);
+            String content = "\n" + "变异体分布：" + mutantDistribution + "\n" +"分区数目为："+partition+"\n"+
+                    "Fmeasure =" + fmeasure + "\n" +
+                    "NFmeasure =" + nfmeasure + "\n" +
+                    "Tmeasure =" + tmeasure + "\n" +
+                    "sdr_Fmeasure =" + sdrfmwasure + "\n" +
+                    "sdr_NFmeasure =" + sdrnfmwasure + "\n" +
+                    "sdr_Tmeasure =" + sdrtmeasure + "\n" +
+                    "平均时间为：" + String.valueOf(time);
             fileWriter.write(content);
             fileWriter.close();
         } catch (IOException e) {

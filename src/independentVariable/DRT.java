@@ -89,10 +89,10 @@ public class DRT {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         TestMethods testMethods = new TestMethods();
         List<String> methodsList = testMethods.getMethods();
-        int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
-//        int[] partitions = {9};//记录每一个分区之中变异体的数量
-        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
-//        String[] distribution = {"1M90-10"};
+//        int[] partitions = {106,69,26,25,9};//记录每一个分区之中变异体的数量
+        int[] partitions = {4};//记录每一个分区之中变异体的数量
+//        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
+        String[] distribution = {"LowFailureRate"};
         int[] numOfPartitions = {18,3};
 //        int[] numOfPartitions = {3};
 //        int[] numOfPartitions = {18};
@@ -110,6 +110,7 @@ public class DRT {
                     for (int j = 0; j < SEEDS; j++) {
                         for (int k = 0; k < TESTTIMES; k++) {
                             int counter = 0 ;
+                            int fmeasure = 0 ;
                             List<Bean> beans = new ArrayList<Bean>();
                             beans.clear();
                             beans = generateTestcases.generateTestcases(j,NUMOFTESTCASES);//获得指定随机数种子情况下的测试用例集
@@ -169,9 +170,12 @@ public class DRT {
                                                 killedMutants.add(temp);
                                                 templist.add(temp);
                                                 if (killedMutants.size() == 1){
+                                                    fmeasure = counter;
                                                     drtMeasure.addFmeasure(counter);
                                                 }else if (killedMutants.size() == partitions[y]){
                                                     drtMeasure.addTmeasure(counter);
+                                                }else if (killedMutants.size() == 2){
+                                                    drtMeasure.addNFmeasure(counter - fmeasure);
                                                 }
                                                 break;
                                             }
@@ -179,7 +183,9 @@ public class DRT {
                                     }
                                     //记录1个测试用例在所有得变异体上执行之后的结果
 //                                    drtLog.recordProcessInfo("drt_log.txt",distribution[y],String.valueOf(j),
-//                                            String.valueOf(partition),String.valueOf(bean.getId()),templist,String.valueOf(partitions[y] - killedMutants.size()),String.valueOf(parameters[x]));
+//                                            String.valueOf(partition),String.valueOf(bean.getId()),templist,
+//                                            String.valueOf(partitions[y] - killedMutants.size()),
+//                                            String.valueOf(parameters[x]));
                                     if (killedMutants.size() >= partitions[y]){
                                         break;
                                     }
@@ -200,8 +206,9 @@ public class DRT {
                     long end = System.currentTimeMillis();
                     totaltime += (end - start);
                     double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVISOR)) ;
-                    drtLog.recordResult("drtResult.xls",drtMeasure.getMeanFmeasure(),drtMeasure.getMeanTmeasure(),
-                            drtMeasure.getStandardDevOfFmeasure(),drtMeasure.getStandardDevOfTmeasure(),numOfPartitions[i],
+                    drtLog.recordResult("drtResult.xls",drtMeasure.getMeanFmeasure(),drtMeasure.getMeanNFmeasure(),
+                            drtMeasure.getMeanTmeasure(),drtMeasure.getStandardDevOfFmeasure(),drtMeasure.getStandardDevOfNFmeasure(),
+                            drtMeasure.getStandardDevOfTmeasure(),numOfPartitions[i],
                             parameters[x],meanTime,distribution[y]);
                 }
             }

@@ -14,9 +14,9 @@ public class MutantSet {
             separator+"mutant";
     private static final String CLASS_NAME = "ParkingFeeCalculator";
     private BinSet[] mutantsList;
-    private static final int NUM = 5 ;
-    private String[] txt = {"M50-50.txt","M60-40.txt","M70-30.txt","M80-20.txt","M90-10.txt"};
-//    private String[] txt = {"M90-10.txt"};
+    private static final int NUM = 1 ;
+//    private String[] txt = {"M50-50.txt","M60-40.txt","M70-30.txt","M80-20.txt","M90-10.txt"};
+    private String[] txt = {"LowFailureRate.txt"};
     public MutantSet() {
         mutantsList = new BinSet[NUM];
         for (int i = 0; i < mutantsList.length; i++) {
@@ -55,4 +55,13 @@ public class MutantSet {
     public BinSet[] getMutantsList() {
         return mutantsList;
     }
+
+    public static void main(String[] args) {
+        MutantSet ms = new MutantSet();
+        BinSet[] binSets = ms.getMutantsList();
+        for (int i = 0; i < binSets[0].size(); i++) {
+            System.out.println(binSets[0].getMutantName(i) + ", ");
+        }
+    }
+
 }
