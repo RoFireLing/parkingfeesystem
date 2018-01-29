@@ -37,16 +37,17 @@ public class RPT {
 //        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
         String[] distribution = {"LowFailureRate"};
         RPTLog rptLog = new RPTLog();
-//        int[] numOfPartitions = {18,3};
+        int[] numOfPartitions = {18,3};
 //        int[] numOfPartitions = {3};
-        int[] numOfPartitions = {18};
+//        int[] numOfPartitions = {18};
         Partition rptPartition = new Partition();
 
         for (int y = 0; y < distribution.length; y++) {//对不同的变异体集进行测试
             for (int i = 0; i < numOfPartitions.length; i++) {//分区方式
-                long totaltime = 0 ;//测试时间的总和
                 RPTMeasure rptMeasure = new RPTMeasure();//记录每一个种子的平均测试结果
-                long start = System.currentTimeMillis();
+                List<Long> falltime = new ArrayList<>();
+                List<Long> f2alltime = new ArrayList<>();
+                List<Long> talltime = new ArrayList<>();
 
                 for (int j = 0; j < SEEDS; j++) {//对每一个种子进行测试
                     for (int k = 0; k < TESTTIMES; k++) {//对每一个随机数种子重复测试30次
@@ -63,6 +64,9 @@ public class RPT {
                             mutants[l] = new BinSet();
                         }
                         mutants = ms.getMutantsList();//获得5中变异体分布的变异体集
+
+                        long starttemp = System.currentTimeMillis();//开始测试的时间
+                        long ftime = 0;
 
                         for (int l = 0; l < beans.size();) {//选取测试用例
                             int partition = rptPartition.nextPartition(numOfPartitions[i]);//获取下一个分区的ID
@@ -108,10 +112,17 @@ public class RPT {
                                             if (killedMutants.size() == 1){
                                                 fmeasure = counter;
                                                 rptMeasure.addFmeasure(counter);
+                                                long ftimeTemp = System.currentTimeMillis();
+                                                ftime = ftimeTemp;
+                                                falltime.add(ftimeTemp - starttemp);
                                             }else if (killedMutants.size() == partitions[y]){
                                                 rptMeasure.addTmeasure(counter);
+                                                long ttimeTemp = System.currentTimeMillis();
+                                                talltime.add(ttimeTemp - starttemp);
                                             }else if (killedMutants.size() == 2){
                                                 rptMeasure.addNFmeasure(counter - fmeasure);
+                                                long f2timeTemp = System.currentTimeMillis();
+                                                f2alltime.add(f2timeTemp - ftime);
                                             }
                                             break;
                                         }
@@ -138,12 +149,27 @@ public class RPT {
                         }
                     }
                 }
-                long end = System.currentTimeMillis();
-                totaltime += (end - start);
-                double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVISOR)) ;
+
+                long ftotaltime = 0;
+                for (int b = 0; b < falltime.size(); b++) {
+                    ftotaltime += falltime.get(b);
+                }
+                double meanftime = Double.parseDouble(decimalFormat.format(ftotaltime / DIVISOR));
+
+                long f2totaltime = 0;
+                for (int b = 0; b < f2alltime.size(); b++) {
+                    f2totaltime += f2alltime.get(b);
+                }
+                double meanf2time = Double.parseDouble(decimalFormat.format(f2totaltime / DIVISOR));
+
+                long ttotaltime = 0;
+                for (int b = 0; b < talltime.size(); b++) {
+                    ttotaltime += talltime.get(b);
+                }
+                double meantime = Double.parseDouble(decimalFormat.format(ttotaltime / DIVISOR));
                 rptLog.recordResult("rptResult.txt",distribution[y],rptMeasure.getMeanFmeasure(),rptMeasure.getMeanNFmeasure(),
                         rptMeasure.getMeanTmeasure(),rptMeasure.getStandardDevOfFmeasure(),rptMeasure.getStandardDevOfNFmeasure(),
-                        rptMeasure.getStandardDevOfTmeasure(),meanTime,String.valueOf(numOfPartitions[i]));
+                        rptMeasure.getStandardDevOfTmeasure(),String.valueOf(numOfPartitions[i]),meanftime,meanf2time,meantime);
             }
         }
     }

@@ -77,7 +77,8 @@ public class DRTLog {
 
     public void recordResult(String filename,String fmesure,String nfmeasure,String tmeasure,
                              String sdrfmeasure,String sdrnfmeasure,String sdrtmeasure, int numOfpartitions,
-                             double parametors,double time,String mutantDistribution){
+                             double parametors,String mutantDistribution
+                            ,double ftime,double f2time,double ttime){
         String path = System.getProperty("user.dir") + separator + "result" + separator + mutantDistribution+filename;
         try{
             File file = new File(path);
@@ -94,7 +95,7 @@ public class DRTLog {
                     //向新建的文件中添加表头
                     WritableWorkbook writableWorkbook1 = Workbook.createWorkbook(file);
                     WritableSheet sheet = writableWorkbook1.createSheet("sheet",0);
-                    String[] elements = {"MuDistribution","partitions","parameters","Fmeasure","sdr_Fmeasure","NFmeasure","sdr_NFmeasure","Tmeasure","sdr_Tmeasure","time"};
+                    String[] elements = {"MuDistribution","partitions","parameters","Fmeasure","sdr_Fmeasure","NFmeasure","sdr_NFmeasure","Tmeasure","sdr_Tmeasure","Ftime","F2time","Ttime"};
                     for (int i = 0; i < elements.length; i++) {
                         sheet.addCell(new Label(i,0,elements[i],wcf));
                         sheet.setColumnView(i,22);
@@ -118,7 +119,7 @@ public class DRTLog {
             //获得之前sheet中写入的行数
             int temp = sheet.getRows();
             String[] elements = {mutantDistribution,String.valueOf(numOfpartitions),String.valueOf(parametors),fmesure,
-            sdrfmeasure,nfmeasure,sdrnfmeasure,tmeasure,sdrtmeasure,String.valueOf(time)};
+            sdrfmeasure,nfmeasure,sdrnfmeasure,tmeasure,sdrtmeasure,String.valueOf(ftime),String.valueOf(f2time),String.valueOf(ttime)};
             for (int i = 0; i < elements.length; i++) {
                 sheet.addCell(new Label(i,temp,elements[i],wcf));
             }
@@ -142,7 +143,7 @@ public class DRTLog {
             //向新建的文件中添加表头
             WritableWorkbook writableWorkbook = Workbook.createWorkbook(file);
             WritableSheet sheet = writableWorkbook.createSheet("sheet",0);
-            String[] elements = {"MuDistribution","partitions","parameters","Fmeasure","sdr_Fmeasure","NFmeasure","sdr_NFmeasure","Tmeasure","sdr_Tmeasure","time"};
+            String[] elements = {"MuDistribution","partitions","parameters","Fmeasure","sdr_Fmeasure","NFmeasure","sdr_NFmeasure","Tmeasure","sdr_Tmeasure","Ftime","F2time","Ttime"};
             for (int i = 0; i < elements.length; i++) {
                 sheet.addCell(new Label(i,0,elements[i],wcf));
                 sheet.setColumnView(i,22);

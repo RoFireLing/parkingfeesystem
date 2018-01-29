@@ -56,10 +56,10 @@ public class RPTLog {
      * @param tmeasure tmeasure的值
      * @param sdrfmwasure 方差
      * @param sdrtmeasure 方差
-     * @param time 花费的时间
      */
     public void recordResult(String filename, String mutantDistribution,String fmeasure,String nfmeasure,String tmeasure,
-                             String sdrfmwasure,String sdrnfmwasure,String sdrtmeasure,double time,String partition){
+                             String sdrfmwasure,String sdrnfmwasure,String sdrtmeasure,String partition
+                            ,double ftime,double f2time,double ttime){
         String path = System.getProperty("user.dir") + separator + "result" + separator + filename;
         File file = new File(path);
         try{
@@ -75,7 +75,9 @@ public class RPTLog {
                     "sdr_Fmeasure =" + sdrfmwasure + "\n" +
                     "sdr_NFmeasure =" + sdrnfmwasure + "\n" +
                     "sdr_Tmeasure =" + sdrtmeasure + "\n" +
-                    "平均时间为：" + String.valueOf(time);
+                    "ftime" + String.valueOf(ftime) + "\n" +
+                    "f2time" + String.valueOf(f2time) + "\n" +
+                    "ttime" + String.valueOf(ttime);
             fileWriter.write(content);
             fileWriter.close();
         } catch (IOException e) {

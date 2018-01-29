@@ -37,8 +37,12 @@ public class RT {
             //记录每一个测试序列的测试结果
             RTMeasure rtMeasure = new RTMeasure();
             RTLog rtLog = new RTLog();
-            long totaltime = 0;
-            long start = System.currentTimeMillis();//开始测试的时间
+
+            List<Long> falltime = new ArrayList<>();
+            List<Long> f2alltime = new ArrayList<>();
+            List<Long> talltime = new ArrayList<>();
+
+
             for (int i = 0; i < SEEDS; i++) {
                 for (int r = 0; r < TESTTIMES; r++) {
                     //获得变异体集
@@ -57,6 +61,9 @@ public class RT {
                     killedMutants.clear();
                     int counter = 0 ;
                     int fmeasure = 0 ;
+
+                    long starttemp = System.currentTimeMillis();//开始测试的时间
+                    long ftime = 0;
 
                     for (int j = 0; j < beans.size(); j++) {//每一个测试用例要在所有的变异体上执行
                         System.out.println("test begin:");
@@ -96,10 +103,17 @@ public class RT {
                                         if (killedMutants.size() == 1){
                                             fmeasure = counter;
                                             rtMeasure.addFmeasure(counter);
+                                            long ftimeTemp = System.currentTimeMillis();
+                                            ftime = ftimeTemp;
+                                            falltime.add(ftimeTemp - starttemp);
                                         }else if (killedMutants.size() == partitions[y]){
                                             rtMeasure.addTmeasure(counter);
+                                            long ttimeTemp = System.currentTimeMillis();
+                                            talltime.add(ttimeTemp - starttemp);
                                         }else if (killedMutants.size() == 2){
                                             rtMeasure.addNFmeasure(counter - fmeasure);
+                                            long f2timeTemp = System.currentTimeMillis();
+                                            f2alltime.add(f2timeTemp - ftime);
                                         }
                                         break;
                                     }
@@ -126,13 +140,31 @@ public class RT {
                     }
                 }
             }
-            long end = System.currentTimeMillis();
-            totaltime += (end - start);
+
             DecimalFormat decimalFormat = new DecimalFormat("#.00");
-            double meanTime = Double.parseDouble(decimalFormat.format(totaltime / DIVID)) ;
+
+            long ftotaltime = 0;
+            for (int i = 0; i < falltime.size(); i++) {
+                ftotaltime += falltime.get(i);
+            }
+            double meanftime = Double.parseDouble(decimalFormat.format(ftotaltime / DIVID));
+
+            long f2totaltime = 0;
+            for (int i = 0; i < f2alltime.size(); i++) {
+                f2totaltime += f2alltime.get(i);
+            }
+            double meanf2time = Double.parseDouble(decimalFormat.format(f2totaltime / DIVID));
+
+            long ttotaltime = 0;
+            for (int i = 0; i < talltime.size(); i++) {
+                ttotaltime += talltime.get(i);
+            }
+            double meantime = Double.parseDouble(decimalFormat.format(ttotaltime / DIVID));
+
+
             rtLog.recordResult("RTResult.txt",distribution[y],rtMeasure.getMeanFmeasure(),
                     rtMeasure.getMeanNFmeasure(),rtMeasure.getMeanTmeasure(),rtMeasure.getStandardDevOfFmeasure(),
-                    rtMeasure.getMeanNFmeasure(),rtMeasure.getStandardDevOfTmeasure(),meanTime);
+                    rtMeasure.getMeanNFmeasure(),rtMeasure.getStandardDevOfTmeasure(),meanftime,meanf2time,meantime);
         }
 
     }
