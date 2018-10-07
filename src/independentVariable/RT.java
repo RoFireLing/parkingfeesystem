@@ -19,8 +19,8 @@ import java.util.List;
  * @author phantom
  */
 public class RT {
-    private static final int SEEDS = 30 ;
-    private static final int TESTTIMES = 30 ;
+    private static final int SEEDS = 1 ;
+    private static final int TESTTIMES = 1 ;
     private static final double DIVID = SEEDS * TESTTIMES ;
     private static final int NUMOFTESTCASES = 500000;
     private static final String ORIGINAL_PACKAGE = "com.lwf.ustb.www.FEE.";

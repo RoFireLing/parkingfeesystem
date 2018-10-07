@@ -21,8 +21,8 @@ import java.util.Random;
  * @author phantom
  */
 public class DRT {
-    private static final int SEEDS = 30 ;
-    private static final int TESTTIMES = 30 ;
+    private static final int SEEDS = 20 ;
+    private static final int TESTTIMES = 20 ;
     private static final double DIVISOR = SEEDS * TESTTIMES;
     private static final String ORIGINAL_PACKAGE = "com.lwf.ustb.www.FEE.";
     private static final int NUMOFTESTCASES = 500000;
@@ -93,12 +93,13 @@ public class DRT {
         int[] partitions = {4};//记录每一个分区之中变异体的数量
 //        String[] distribution = {"M50-50","M60-40","M70-30","M80-20","M90-10"};
         String[] distribution = {"LowFailureRate"};
-        int[] numOfPartitions = {18,3};
-//        int[] numOfPartitions = {3};
+//        int[] numOfPartitions = {18,3};
+        int[] numOfPartitions = {3};
 //        int[] numOfPartitions = {18};
         Partition rptPartition = new Partition();
-        double[] parameters = {0.00001,0.00005,0.0001,0.0005,0.001,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5};
-//        double[] parameters = {0.05,0.1,0.2};
+//        double[] parameters = {0.00001,0.00005,0.0001,0.0005,0.001,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5};
+//        double[] parameters = {0.004716, 0.004179, 0.003751, 0.003403, 0.003113};
+        double[] parameters = {0.3,0.3,0.3,0.3,0.3};
         DRTLog drtLog = new DRTLog();
         for (int y = 0; y < distribution.length; y++) {//对不同的变异体集进行测试
             for (int i = 0; i < numOfPartitions.length; i++) {
