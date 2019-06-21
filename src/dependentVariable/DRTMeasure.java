@@ -13,6 +13,19 @@ public class DRTMeasure {
     private List<Double> Fmeasure;
     private List<Double> Tmeasure;
     private List<Double> NFmeasure;
+
+    public List<Double> getFmeasure() {
+        return Fmeasure;
+    }
+
+    public List<Double> getTmeasure() {
+        return Tmeasure;
+    }
+
+    public List<Double> getNFmeasure() {
+        return NFmeasure;
+    }
+
     public void addFmeasure(double item){
         Fmeasure.add(item);
     }
@@ -21,7 +34,7 @@ public class DRTMeasure {
         Tmeasure.add(item);
     }
 
-    public void addNFmeasure(double item) { NFmeasure.add(item); }
+    public void addNFmeasure(double item) { NFmeasure.add(item);}
 
     public int sizeFmeasure(){
         return Fmeasure.size();
@@ -77,7 +90,6 @@ public class DRTMeasure {
         DecimalFormat decimalFormat = new DecimalFormat("#.00");
         return decimalFormat.format(Math.sqrt(varianceOfArray(2,this.NFmeasure)));
     }
-
 
     /**
      * 返回Tmeasure的标准差

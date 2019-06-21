@@ -38,7 +38,7 @@ public class RPT {
         String[] distribution = {"LowFailureRate"};
         RPTLog rptLog = new RPTLog();
         int[] numOfPartitions = {18,3};
-//        int[] numOfPartitions = {3};
+//        int[] numOfPartitions = {3,3,3,3,3};
 //        int[] numOfPartitions = {18};
         Partition rptPartition = new Partition();
 
@@ -128,10 +128,10 @@ public class RPT {
                                         }
                                     }
                                 }
-                                //记录1个测试用例在所有得变异体上执行之后的结果
-                                rptLog.recordProcessInfo("rpt_log.txt",distribution[y],String.valueOf(j),
-                                        String.valueOf(partition),String.valueOf(bean.getId()),
-                                        templist,String.valueOf(partitions[y] - killedMutants.size()));
+//                                //记录1个测试用例在所有得变异体上执行之后的结果
+//                                rptLog.recordProcessInfo("rpt_log.txt",distribution[y],String.valueOf(j),
+//                                        String.valueOf(partition),String.valueOf(bean.getId()),
+//                                        templist,String.valueOf(partitions[y] - killedMutants.size()));
                                 if (killedMutants.size() >= partitions[y]){
                                     break;
                                 }

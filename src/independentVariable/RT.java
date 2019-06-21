@@ -19,8 +19,8 @@ import java.util.List;
  * @author phantom
  */
 public class RT {
-    private static final int SEEDS = 1 ;
-    private static final int TESTTIMES = 1 ;
+    private static final int SEEDS = 30 ;
+    private static final int TESTTIMES = 30 ;
     private static final double DIVID = SEEDS * TESTTIMES ;
     private static final int NUMOFTESTCASES = 500000;
     private static final String ORIGINAL_PACKAGE = "com.lwf.ustb.www.FEE.";
@@ -120,9 +120,9 @@ public class RT {
                                 }
                             }
                             //记录1个测试用例在所有得变异体上执行之后的结果
-                            rtLog.recordProcessInfo("RT_log.txt",distribution[y],String.valueOf(i),
-                                    String.valueOf(bean.getId()),
-                                    templist,String.valueOf(partitions[y] - killedMutants.size()));
+//                            rtLog.recordProcessInfo("RT_log.txt",distribution[y],String.valueOf(i),
+//                                    String.valueOf(bean.getId()),
+//                                    templist,String.valueOf(partitions[y] - killedMutants.size()));
                             if (killedMutants.size() >= partitions[y]){
                                 break;
                             }
